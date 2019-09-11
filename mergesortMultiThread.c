@@ -67,7 +67,18 @@ int main(int argc, char **argv)
 }
 
 void Merge(int begin, int middle, int end) {}
-void MergeSort(int begin, int end) {}
+
+void MergeSort(int begin, int end)
+{
+    int middle = begin + (end - begin) / 2;
+    if (begin < end)
+    {
+        MergeSort(begin, middle);
+        MergeSort(middle + 1, end);
+        Merge(begin, middle, end);
+    }
+}
+
 void ReadFile(char *fileName)
 {
     FILE *file;
@@ -95,6 +106,7 @@ void ReadFile(char *fileName)
     }
     fclose(file);
 }
+
 void SaveFile(char *fileName)
 {
     FILE *file;
@@ -114,7 +126,9 @@ void SaveFile(char *fileName)
     }
     fclose(file);
 }
+
 void SaveResultFile() {}
+
 void RealocVector()
 {
     initialLenght *= 2;
@@ -126,7 +140,20 @@ void RealocVector()
         exit(EXIT_FAILURE);
     }
 }
+
 void *ThreadProccess(void *info)
 {
-    return NULL;
+    threadInfo *infos = (threadInfo *)info;
+
+    int begin = infos->threadID * (vectorLenght / threadNumbers);
+    int end = (infos->threadID + 1) * (vectorLenght / threadNumbers) - 1;
+    int middle = begin + (end - begin) / 2;
+
+    if (begin < end)
+    {
+        MergeSort(begin, middle);
+        MergeSort(middle + 1, end);
+        Merge(begin, middle, end);
+    }
+    pthread_exit(NULL);
 }
