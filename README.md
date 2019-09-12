@@ -11,13 +11,16 @@ Gabriel Coppola - 216146
 # Instruções
 
  1. Compilar o programa
+
 ` gcc -g -o mergesortMultiThread mergesortMultiThread.c -lpthread`
 
  2. Executar o programa
  - Maneira a ser seguida para execução:
+
 	  ` ./mergesortMultiThread numero_thread arquivos_entradas arquivo_saida`
 
  - Exemplo para execução:
+ 
 	 `./mergesortMultiThread 3 fileOne.txt fileTwo.txt fileThree.txt fileFour.txt output.txt`
 
 3. Será gerado um arquivo de saída com o mesmo nome que você colocou quando compilou o programa.
