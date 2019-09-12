@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 
             sprintf(timeTime, "%f", difftime(timeT2, timeT1));
             sprintf(clockTime, "%f", ((time2 - time1) / (double)CLOCKS_PER_SEC));
-            
+
             SaveFile(outputFileName);
 
             printf("----- Numbers of Threads: %d -----\n----- Number of numbers ordered: %d -----\n----- ClockT: %s -----\n----- TimeT: %s -----\n ", threadNumbers, vectorLength, clockTime, timeTime);
@@ -111,38 +111,47 @@ int main(int argc, char **argv)
 
 void Merge(int begin, int middle, int end)
 {
-    register int leftVectorLength = middle - begin + 1;
-    register int rigthVectorLength = end - middle;
-    register int i = 0;
-    register int l = begin;
+    register int beginAux1 = begin, beginAux2 = middle + 1, beginAux = 0, tam = end - begin + 1;
+    int *vetAux = (int *)malloc(tam * sizeof(int));
 
-    int left[leftVectorLength];
-    int rigth[rigthVectorLength];
-
-    for (register int k = 0; k < leftVectorLength; k++)
+    while (beginAux1 <= middle && beginAux2 <= end)
     {
-        left[k] = finalVector[k + begin];
+        if (finalVector[beginAux1] < finalVector[beginAux2])
+        {
+            vetAux[beginAux] = finalVector[beginAux1];
+            beginAux1++;
+        }
+        else
+        {
+            vetAux[beginAux] = finalVector[beginAux2];
+            beginAux2++;
+        }
+        beginAux++;
     }
 
-    for (register int k = 0; k < rigthVectorLength; k++)
+    while (beginAux1 <= middle)
     {
-        rigth[k] = finalVector[k + middle + 1];
+        vetAux[beginAux] = finalVector[beginAux1];
+        beginAux++;
+        beginAux1++;
     }
 
-    while (i < leftVectorLength)
+    while (beginAux2 <= end)
     {
-        finalVector[l++] = left[i++];
+        vetAux[beginAux] = finalVector[beginAux2];
+        beginAux++;
+        beginAux2++;
     }
-    i = 0;
-    while (i < rigthVectorLength)
+
+    for (beginAux = begin; beginAux <= end; beginAux++)
     {
-        finalVector[l++] = rigth[i++];
+        finalVector[beginAux] = vetAux[beginAux - begin];
     }
 }
 
 void MergeSort(int begin, int end)
 {
-    int middle = begin + (end - begin) / 2;
+    register int middle = begin + (end - begin) / 2;
     if (begin < end)
     {
         MergeSort(begin, middle);
