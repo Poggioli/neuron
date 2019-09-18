@@ -7,7 +7,7 @@ Joao Vitor Pogiolli - 158049
 
 Rafella Rodrigues - 243597
 
-<s>Gabriel Coppola - 216146<s> 
+<s>Gabriel Coppola - 216146</s> 
 # Instruções
 
  1. Compilar o programa
