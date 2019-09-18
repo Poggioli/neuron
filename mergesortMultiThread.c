@@ -80,7 +80,7 @@ int main(int argc, char **argv)
             }
 
             Merge(0, (vectorLength / 2 - 1) / 2, vectorLength / 2 - 1);
-            Merge(vectorLength / 2, vectorLength / 2 + (vectorLength - 1 - vectorLength / 2), vectorLength - 1);
+            Merge(vectorLength / 2, vectorLength / 2 + (vectorLength - 1 - vectorLength / 2) / 2, vectorLength - 1);
             Merge(0, (vectorLength - 1) / 2, vectorLength - 1);
 
             time2 = clock();
@@ -227,9 +227,9 @@ void *ThreadProccess(void *info)
 {
     threadInfo *infos = (threadInfo *)info;
 
-    int begin = infos->threadID * (vectorLength / threadNumbers);
-    int end = (infos->threadID + 1) * (vectorLength / threadNumbers) - 1;
-    int middle = begin + (end - begin) / 2;
+    register int begin = infos->threadID * (vectorLength / threadNumbers);
+    register int end = (infos->threadID + 1) * (vectorLength / threadNumbers) - 1;
+    register int middle = begin + (end - begin) / 2;
 
     if (begin < end)
     {
