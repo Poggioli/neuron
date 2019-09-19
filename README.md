@@ -21,6 +21,6 @@ Rafella Rodrigues - 243597
 
  - Exemplo para execução:
 
-	 `./mergesortMultiThread 3 fileOne.txt fileTwo.txt fileThree.txt fileFour.txt output.txt`
+	 `./mergesortMultiThread 2 file1.txt file2.txt file3.txt file4.txt file5.txt output.txt`
 
 3. Será gerado um arquivo de saída com o mesmo nome que você colocou quando compilou o programa.
