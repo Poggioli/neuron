@@ -5,7 +5,7 @@ Este repositório tem como destino o projeto da disciplina TT304 - Sistemas Oper
 
 Joao Vitor Pogiolli - 158049
 
-Rafella Rodrigues - 243597
+Rafaella Rodrigues - 243597
 
 <s>Gabriel Coppola - 216146</s> 
 # Instruções
