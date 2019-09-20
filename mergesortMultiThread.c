@@ -151,9 +151,9 @@ void Merge(int begin, int middle, int end)
 
 void MergeSort(int begin, int end)
 {
-    register int middle = begin + (end - begin) / 2;
     if (begin < end)
     {
+        register int middle = begin + (end - begin) / 2;
         MergeSort(begin, middle);
         MergeSort(middle + 1, end);
         Merge(begin, middle, end);
