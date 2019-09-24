@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 
             pthread_t threads[threadNumbers];
             threadInfo infoThread[threadNumbers];
-            printf("----- Starting ordering -----\n");
+            printf("----- Starting sorting -----\n");
             clock_t time1, time2;
             time_t timeT1, timeT2;
 
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
             time2 = clock();
             timeT2 = time(NULL);
-            printf("----- Finished ordering -----\n\n");
+            printf("----- Finished sorting -----\n\n");
 
             sprintf(timeTime, "%f", difftime(timeT2, timeT1));
             sprintf(clockTime, "%f", ((time2 - time1) / (double)CLOCKS_PER_SEC));
