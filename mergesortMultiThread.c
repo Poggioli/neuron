@@ -203,7 +203,14 @@ void SaveFile(char *fileName)
         printf("----- Writing output file: %s -----\n", fileName);
         for (register int i = 0; i < vectorLength; i++)
         {
-            fprintf(file, "%d\n", finalVector[i]);
+            if (i != vectorLength - 1)
+            {
+                fprintf(file, "%d\n", finalVector[i]);
+            }
+            else
+            {
+                fprintf(file, "%d", finalVector[i]);
+            }
         }
     }
     fclose(file);
