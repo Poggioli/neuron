@@ -242,16 +242,10 @@ void RealocVector()
 void *ThreadProccess(void *info)
 {
     pthread_mutex_lock(&lock);
-
     threadInfo *infos = (threadInfo *)info;
-
     register int begin = infos->threadID * (vectorLength / threadNumbers);
     register int end = (infos->threadID + 1) * (vectorLength / threadNumbers) - 1;
     register int middle = begin + (end - begin) / 2;
-    printf("id thread: %d\n", infos->threadID);
-    printf("a posicao %d eh o inicio da thread: %d\n", begin, infos->threadID);
-    printf("a posicao %d eh o meio da thread: %d\n", middle, infos->threadID);
-    printf("a posicao %d eh o fim da thread: %d\n", end, infos->threadID);
 
     if (begin < end)
     {
@@ -260,6 +254,5 @@ void *ThreadProccess(void *info)
         Merge(begin, middle, end);
     }
     pthread_mutex_unlock(&lock);
-
     pthread_exit(NULL);
 }
