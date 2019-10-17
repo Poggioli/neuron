@@ -238,7 +238,6 @@ void RealocVector()
 void *ThreadProccess(void *info)
 {
     threadInfo *infos = (threadInfo *)info;
-
     register int begin = infos->threadID * (vectorLength / threadNumbers);
     register int end = (infos->threadID + 1) * (vectorLength / threadNumbers) - 1;
     register int middle = begin + (end - begin) / 2;
