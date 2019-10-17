@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 void Merge(int begin, int middle, int end)
 {
 
-    register int left[middle - begin + 1], right[end - middle];
+    int left[middle - begin + 1], right[end - middle];
     register int n1 = middle - begin + 1;
     register int n2 = end - middle;
     register int i, j;
