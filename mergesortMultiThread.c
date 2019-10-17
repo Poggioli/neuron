@@ -20,7 +20,6 @@ typedef struct ThreadInfo
     int threadID;
 } threadInfo;
 
-pthread_mutex_t lock;
 int initialLength = 10;
 int *finalVector;
 int threadNumbers, vectorLength = 0;
@@ -36,12 +35,7 @@ void *ThreadProccess(void *info);
 
 int main(int argc, char **argv)
 {
-    if (pthread_mutex_init(&lock, NULL) != 0)
-    {
-        printf("===== ERROR =====\n");
-        printf("Mutex init has failed\n");
-        exit(EXIT_FAILURE);
-    }
+
     if (argc >= 4)
     {
         register int lastPositionArgc = argc - 1;
@@ -86,7 +80,6 @@ int main(int argc, char **argv)
                 pthread_join(threads[i], NULL);
             }
 
-            pthread_mutex_destroy(&lock);
             Merge(0, (vectorLength / 2 - 1) / 2, vectorLength / 2 - 1);
             Merge(vectorLength / 2, vectorLength / 2 + (vectorLength - 1 - vectorLength / 2) / 2, vectorLength - 1);
             Merge(0, (vectorLength - 1) / 2, vectorLength - 1);
@@ -120,41 +113,44 @@ int main(int argc, char **argv)
 void Merge(int begin, int middle, int end)
 {
 
-    register int beginAux1 = begin, beginAux2 = middle + 1, beginAux = 0, tam = end - begin + 1;
-    int *vetAux = (int *)malloc(tam * sizeof(int));
+    register int left[middle - begin + 1], right[end - middle];
+    register int n1 = middle - begin + 1;
+    register int n2 = end - middle;
+    register int i, j;
 
-    while (beginAux1 <= middle && beginAux2 <= end)
+    for (i = 0; i < n1; i++)
     {
-        if (finalVector[beginAux1] < finalVector[beginAux2])
+        left[i] = finalVector[i + begin];
+    }
+
+    for (i = 0; i < n2; i++)
+    {
+        right[i] = finalVector[i + middle + 1];
+    }
+
+    register int k = begin;
+    i = j = 0;
+
+    while (i < n1 && j < n2)
+    {
+        if (left[i] <= right[j])
         {
-            vetAux[beginAux] = finalVector[beginAux1];
-            beginAux1++;
+            finalVector[k++] = left[i++];
         }
         else
         {
-            vetAux[beginAux] = finalVector[beginAux2];
-            beginAux2++;
+            finalVector[k++] = right[j++];
         }
-        beginAux++;
     }
 
-    while (beginAux1 <= middle)
+    while (i < n1)
     {
-        vetAux[beginAux] = finalVector[beginAux1];
-        beginAux++;
-        beginAux1++;
+        finalVector[k++] = left[i++];
     }
 
-    while (beginAux2 <= end)
+    while (j < n2)
     {
-        vetAux[beginAux] = finalVector[beginAux2];
-        beginAux++;
-        beginAux2++;
-    }
-
-    for (beginAux = begin; beginAux <= end; beginAux++)
-    {
-        finalVector[beginAux] = vetAux[beginAux - begin];
+        finalVector[k++] = right[j++];
     }
 }
 
@@ -241,17 +237,11 @@ void RealocVector()
 
 void *ThreadProccess(void *info)
 {
-    pthread_mutex_lock(&lock);
-
     threadInfo *infos = (threadInfo *)info;
 
     register int begin = infos->threadID * (vectorLength / threadNumbers);
     register int end = (infos->threadID + 1) * (vectorLength / threadNumbers) - 1;
     register int middle = begin + (end - begin) / 2;
-    printf("id thread: %d\n", infos->threadID);
-    printf("a posicao %d eh o inicio da thread: %d\n", begin, infos->threadID);
-    printf("a posicao %d eh o meio da thread: %d\n", middle, infos->threadID);
-    printf("a posicao %d eh o fim da thread: %d\n", end, infos->threadID);
 
     if (begin < end)
     {
@@ -259,7 +249,5 @@ void *ThreadProccess(void *info)
         MergeSort(middle + 1, end);
         Merge(begin, middle, end);
     }
-    pthread_mutex_unlock(&lock);
-
     pthread_exit(NULL);
 }
