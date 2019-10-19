@@ -14,10 +14,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 typedef struct ThreadInfo
 {
     int threadID;
+    int vectorBegin;
 } threadInfo;
 
 int initialLength = 10;
@@ -25,8 +27,8 @@ int *finalVector;
 int threadNumbers, vectorLength = 0;
 char clockTime[500], timeTime[500];
 
-void Merge(int begin, int middle, int end);
-void MergeSort(int begin, int end);
+void Merge(int low, int middle, int high);
+void MergeSort(int low, int high);
 void ReadFile(char *fileName);
 void RealocVector();
 void SaveFile(char *fileName);
@@ -69,9 +71,18 @@ int main(int argc, char **argv)
             time1 = clock();
             timeT1 = time(NULL);
 
+            register int vectorLengthOfThread = vectorLength / threadNumbers;
             for (register int i = 0; i < threadNumbers; i++)
             {
                 infoThread[i].threadID = i;
+                if (i == threadNumbers - 1)
+                {
+                    infoThread[i].vectorBegin = vectorLengthOfThread * (threadNumbers - 1);
+                }
+                else
+                {
+                    infoThread[i].vectorBegin = vectorLengthOfThread * i;
+                }
                 pthread_create(&threads[i], NULL, ThreadProccess, (void *)&infoThread[i]);
             }
 
@@ -80,9 +91,39 @@ int main(int argc, char **argv)
                 pthread_join(threads[i], NULL);
             }
 
-            Merge(0, (vectorLength / 2 - 1) / 2, vectorLength / 2 - 1);
-            Merge(vectorLength / 2, vectorLength / 2 + (vectorLength - 1 - vectorLength / 2) / 2, vectorLength - 1);
-            Merge(0, (vectorLength - 1) / 2, vectorLength - 1);
+            register int numOfMerge = threadNumbers / 2, i = 0,
+                         low = 0,
+                         high = vectorLengthOfThread * 2 - 1,
+                         middle = (low + (high - low) / 2);
+
+            while (i < numOfMerge)
+            {
+                Merge(low, middle, high);
+                if (i == numOfMerge - 1)
+                {
+                    i = 0;
+                    numOfMerge /= 2;
+                    vectorLengthOfThread *= 2;
+                    low = 0;
+                    middle = vectorLengthOfThread - 1;
+                    high = middle + vectorLengthOfThread;
+                    if (numOfMerge == 1)
+                    {
+                        high = vectorLength - 1;
+                    }
+                }
+                else
+                {
+                    i++;
+                    low = high + 1,
+                    middle = low + vectorLengthOfThread - 1,
+                    high = middle + vectorLengthOfThread;
+                    if (i == numOfMerge - 1)
+                    {
+                        high = vectorLength - 1;
+                    }
+                }
+            }
 
             time2 = clock();
             timeT2 = time(NULL);
@@ -110,17 +151,17 @@ int main(int argc, char **argv)
     }
 }
 
-void Merge(int begin, int middle, int end)
+void Merge(int low, int middle, int high)
 {
 
-    int left[middle - begin + 1], right[end - middle];
-    register int n1 = middle - begin + 1;
-    register int n2 = end - middle;
+    int left[middle - low + 1], right[high - middle];
+    register int n1 = middle - low + 1;
+    register int n2 = high - middle;
     register int i, j;
 
     for (i = 0; i < n1; i++)
     {
-        left[i] = finalVector[i + begin];
+        left[i] = finalVector[i + low];
     }
 
     for (i = 0; i < n2; i++)
@@ -128,7 +169,7 @@ void Merge(int begin, int middle, int end)
         right[i] = finalVector[i + middle + 1];
     }
 
-    register int k = begin;
+    register int k = low;
     i = j = 0;
 
     while (i < n1 && j < n2)
@@ -154,14 +195,14 @@ void Merge(int begin, int middle, int end)
     }
 }
 
-void MergeSort(int begin, int end)
+void MergeSort(int low, int high)
 {
-    if (begin < end)
+    if (low < high)
     {
-        register int middle = begin + (end - begin) / 2;
-        MergeSort(begin, middle);
-        MergeSort(middle + 1, end);
-        Merge(begin, middle, end);
+        register int middle = low + (high - low) / 2;
+        MergeSort(low, middle);
+        MergeSort(middle + 1, high);
+        Merge(low, middle, high);
     }
 }
 
@@ -238,15 +279,19 @@ void RealocVector()
 void *ThreadProccess(void *info)
 {
     threadInfo *infos = (threadInfo *)info;
-    register int begin = infos->threadID * (vectorLength / threadNumbers);
-    register int end = (infos->threadID + 1) * (vectorLength / threadNumbers) - 1;
-    register int middle = begin + (end - begin) / 2;
-
-    if (begin < end)
+    register int low = infos->vectorBegin;
+    register int high = (infos->threadID + 1) * (vectorLength / threadNumbers) - 1;
+    if (infos->threadID == threadNumbers - 1)
     {
-        MergeSort(begin, middle);
-        MergeSort(middle + 1, end);
-        Merge(begin, middle, end);
+        high = vectorLength - 1;
+    }
+    register int middle = low + (high - low) / 2;
+
+    if (low < high)
+    {
+        MergeSort(low, middle);
+        MergeSort(middle + 1, high);
+        Merge(low, middle, high);
     }
     pthread_exit(NULL);
 }
