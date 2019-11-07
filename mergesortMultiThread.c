@@ -32,7 +32,6 @@ void MergeSort(int low, int high);
 void ReadFile(char *fileName);
 void RealocVector();
 void SaveFile(char *fileName);
-void SaveResultFile();
 void *ThreadProccess(void *info);
 
 int main(int argc, char **argv)
@@ -68,21 +67,15 @@ int main(int argc, char **argv)
             clock_t time1, time2;
             time_t timeT1, timeT2;
 
+            register int vectorLengthOfThread = vectorLength / threadNumbers;
+            
             time1 = clock();
             timeT1 = time(NULL);
 
-            register int vectorLengthOfThread = vectorLength / threadNumbers;
             for (register int i = 0; i < threadNumbers; i++)
             {
                 infoThread[i].threadID = i;
-                if (i == threadNumbers - 1)
-                {
-                    infoThread[i].vectorBegin = vectorLengthOfThread * (threadNumbers - 1);
-                }
-                else
-                {
-                    infoThread[i].vectorBegin = vectorLengthOfThread * i;
-                }
+                infoThread[i].vectorBegin = vectorLengthOfThread * i;
                 pthread_create(&threads[i], NULL, ThreadProccess, (void *)&infoThread[i]);
             }
 
@@ -261,8 +254,6 @@ void SaveFile(char *fileName)
     }
     fclose(file);
 }
-
-void SaveResultFile() {}
 
 void RealocVector()
 {
