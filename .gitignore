@@ -3,3 +3,4 @@ mergesortMultiThread
 mergesortMultiThread.o
 output.txt
 .vscode
+results.txt

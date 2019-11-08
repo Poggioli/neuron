@@ -25,13 +25,14 @@ typedef struct ThreadInfo
 int initialLength = 10;
 int *finalVector;
 int threadNumbers, vectorLength = 0;
-char clockTime[500], timeTime[500];
+char clockTime[500], clockTime2[500], timeTime[500];
 
 void Merge(int low, int middle, int high);
 void MergeSort(int low, int high);
 void ReadFile(char *fileName);
 void RealocVector();
 void SaveFile(char *fileName);
+void SaveResultFile(char *clockTime, char *timeTime, int qntInputFiles);
 void *ThreadProccess(void *info);
 
 int main(int argc, char **argv)
@@ -68,7 +69,7 @@ int main(int argc, char **argv)
             time_t timeT1, timeT2;
 
             register int vectorLengthOfThread = vectorLength / threadNumbers;
-            
+
             time1 = clock();
             timeT1 = time(NULL);
 
@@ -124,8 +125,16 @@ int main(int argc, char **argv)
 
             sprintf(timeTime, "%f", difftime(timeT2, timeT1));
             sprintf(clockTime, "%f", ((time2 - time1) / (double)CLOCKS_PER_SEC));
-
+            if (threadNumbers == 2)
+            {
+                sprintf(clockTime2, "%f", ((time2 - time1) / (double)CLOCKS_PER_SEC) / 2);
+            }
+            else
+            {
+                sprintf(clockTime2, "%f", ((time2 - time1) / (double)CLOCKS_PER_SEC) / 4);
+            }
             SaveFile(outputFileName);
+            SaveResultFile(clockTime2, timeTime, argc - 3);
 
             printf("----- Numbers of Threads: %d -----\n----- Number of numbers ordered: %d -----\n----- ClockT: %s -----\n----- TimeT: %s -----\n ", threadNumbers, vectorLength, clockTime, timeTime);
         }
@@ -265,6 +274,25 @@ void RealocVector()
         printf("Operating system cannot allocate memory\n");
         exit(EXIT_FAILURE);
     }
+}
+
+void SaveResultFile(char *clockTime, char *timeTime, int qntInputFiles)
+{
+    FILE *file;
+    char *fileName = "results.txt";
+    file = fopen(fileName, "a");
+    if (!file)
+    {
+        printf("===== ERROR =====\n");
+        printf("Error to open file output file: %s\n", fileName);
+    }
+    else
+    {
+        printf("----- Writing result file: %s -----\n", fileName);
+        fprintf(file, "%d threads\t\t| %d arquivos\n%s clockT\t| %s TimeT\n", threadNumbers, qntInputFiles, clockTime, timeTime);
+        fprintf(file, "%d;%d;%s;%s;\n\n", threadNumbers, qntInputFiles, clockTime, timeTime);
+    }
+    fclose(file);
 }
 
 void *ThreadProccess(void *info)
