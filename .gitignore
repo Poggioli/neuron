@@ -6,3 +6,4 @@ output.txt
 results.txt
 *.csv
 *.ods
+*.DS_Store
